@@ -50,14 +50,14 @@ set.seed(100)
    dim(test1)
 
 #Model Evaluation Metrics
-   mape <- function(actual,pred){
-     mape <- mean(abs((actual - pred)/actual))*100
+   mape <- function(store,sales){
+     mape <- mean(abs((store - sales)/train))*100
      return (mape)
    }
     
 # Rain forest Modelling
-   head = head(train)
-    set.seed(913000)
+   head = train[2:11,]
+    set.seed(1000)
     
      library(randomForest)
    
@@ -82,6 +82,18 @@ set.seed(100)
        x1
        predection <- predict(x1,train)
        predection
+
+#Decision Tree Classification
+       library(tree)
+       library(ISLR)
+       a1 <- subset(train,select = c("store","item","sales","year","quarter","month"))
+       Salecat <- ifelse(a1$sales<=8,"no","yes")
+       data <-  data.frame(a1,Salecat)
+       sale.tree <- tree(sales~store+item+year+quarter+month,data = data)
+       summary(sale.tree)
+       plot(sale.tree)
+       text(sale.tree, pretty=0)
+       predict(sale.tree)
        
        
 #Plotting
@@ -176,18 +188,25 @@ set.seed(100)
        #geompoint
        ggplot(train, aes(x=sales, y=store, fill='yellow')) + geom_point()
        
+       #Visvalization using correation
        
+       library("ggpubr")
+       
+      
+        ggscatter(train, x = "store", y = "sales", 
+                              add = "reg.line", conf.int = TRUE, 
+                              cor.coef = TRUE, cor.method = "pearson",
+                              xlab = "Store", ylab = "Sales")
    
-   
-       create_train_test <- function(train, size = 0.8, train = TRUE) {
-               n_row = nrow(train)
-               total_row = size * n_row
-               train_sample < - 1: total_row
-               if (train2 == TRUE) {
-                      return (data[head, ])
-                  } else {
-                         return (data[-head, ])
-                    }
-           }
+        a1<-train[1:100,]
+        view(a1)
+        shapiro.test(a1$sales)
+        
+        #Pearson Method Of Correlation
+        
+        res <- cor.test(a1$sales, a1$store, 
+                        method = "pearson")
+        res
+     
        
    
